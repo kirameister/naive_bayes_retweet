@@ -137,7 +137,7 @@ def main(yaml_file, tweet_file, tweeted_file):
 if __name__ == '__main__':
     args = sys.argv
     if len(args) != 4:
-        sys.stderr.write("Usage: python " + args[0] + "YAML_file Tweet_file Tweeted_file\n")
+        sys.stderr.write("Usage: python " + args[0] + " YAML_file Tweet_file Tweeted_file\n")
         sys.exit()
 
     main(args[1], args[2], args[3])
