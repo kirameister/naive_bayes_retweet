@@ -1,0 +1,8 @@
+false_category_count: 2
+false_category_word_count: 16
+false_words: {!!python/unicode 'E': 2, !!python/unicode 'T': 2, !!python/unicode 'W': 1,
+  か: 1, と: 1, の: 1, ァ: 1, イ: 1, オ: 1, リ: 1, ン: 1, ヴ: 1, 告: 1, 広: 1}
+true_category_count: 2
+true_category_word_count: 20
+true_words: {!!python/unicode 'E': 2, !!python/unicode 'T': 2, !!python/unicode 'W': 1,
+  と: 2, の: 1, ァ: 1, イ: 1, オ: 1, リ: 1, ン: 1, ヴ: 1, 程: 1, 練: 1, 習: 1, 色: 1, 音: 2}

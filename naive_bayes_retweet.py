@@ -97,7 +97,7 @@ class NaiveBayes:
 def main(yaml_file, tweet_file, tweeted_file):
     bayes = NaiveBayes(yaml_file)
     # Following lines should be used only for (re-)training the model and store it to YAML file
-    #bayes.train("train_ja/violin.true", "train_ja/violin.false")
+    #bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
     #bayes.write_yaml()
 
     tweeted_set = {}
