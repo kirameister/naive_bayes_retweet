@@ -11,7 +11,7 @@ auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
 auth.set_access_token('access_token', 'access_token_secret')
 api = tweepy.API(auth)
 
-class NaiveBayes:
+class NaiveBayes(object):
     def __init__(self, yaml_file):
         # open YAML file
         self.data = yaml.load(open("data.yaml").read())
