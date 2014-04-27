@@ -3,8 +3,10 @@ import math
 import operator
 import re
 import sys
-import tweepy
 import yaml
+
+import tweepy
+
 
 # It may be worth having api keys stored in YAML file as well (if it's worth..)
 auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
@@ -17,9 +19,9 @@ class NaiveBayes(object):
         self.data = yaml.load(open("data.yaml").read())
 
     def train(self, true_file, false_file):
-        self.data["true_category_count"]  = 0
+        self.data["true_category_count"] = 0
         self.data["false_category_count"] = 0
-        self.data["true_category_word_count"]  = 0
+        self.data["true_category_word_count"] = 0
         self.data["false_category_word_count"] = 0
         self.data["true_words"] = {}
         self.data["false_words"] = {}
@@ -42,13 +44,13 @@ class NaiveBayes(object):
                 self.data["true_category_word_count"] += 1
                 try:
                     self.data["true_words"][token] += 1
-                except KeyError :
+                except KeyError:
                     self.data["true_words"][token] = 1
         true_data.close()
 
         false_data = open(false_file, "r")
         for row in false_data:
-            # ID  TWEET
+            # ID TWEET
             row.rstrip()
             segments = re.split('\t', row)
             tweet_id = segments[0]
@@ -62,7 +64,7 @@ class NaiveBayes(object):
                 self.data["false_category_word_count"] += 1
                 try:
                     self.data["false_words"][token] += 1
-                except KeyError :
+                except KeyError:
                     self.data["false_words"][token] = 1
         false_data.close()
 
@@ -73,11 +75,11 @@ class NaiveBayes(object):
         tweet_in_question = re.sub(' ', '', tweet_in_question)
         tokens = list(tweet_in_question)
         all_category_count = self.data["false_category_count"] + self.data["true_category_count"]
-        score_true  = math.log(float(self.data["true_category_count"])  / float(all_category_count)) # P(category_true)
-        score_false = math.log(float(self.data["false_category_count"]) / float(all_category_count)) # P(category_false)
+        score_true = math.log(float(self.data["true_category_count"]) / float(all_category_count))    # P(category_true)
+        score_false = math.log(float(self.data["false_category_count"]) / float(all_category_count))  # P(category_false)
         for token in tokens:
             try:
-                score_true +=  math.log(float(self.data["true_words"][token])  / float(self.data["true_category_word_count"]))
+                score_true += math.log(float(self.data["true_words"][token]) / float(self.data["true_category_word_count"]))
             except KeyError:
                 pass
             try:
@@ -86,19 +88,17 @@ class NaiveBayes(object):
                 pass
         return score_true
 
-
     def write_yaml(self):
         yaml_file = "data.yaml"
         stream = file(yaml_file, 'w')
         yaml.dump(self.data, stream, encoding=("utf-8"), allow_unicode=True)
 
 
-
 def main(yaml_file, tweet_file, tweeted_file):
     bayes = NaiveBayes(yaml_file)
     # Following lines should be used only for (re-)training the model and store it to YAML file
-    #bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
-    #bayes.write_yaml()
+    # bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
+    # bayes.write_yaml()
 
     tweeted_set = {}
     tweeted_data = open(tweeted_file, "r")
@@ -116,7 +116,7 @@ def main(yaml_file, tweet_file, tweeted_file):
         tweet.rstrip()
         tweet_id = segments[0]
         tweet_list.append([bayes.predicted_score(tweet), tweet_id, tweet])
-    tweet_list.sort(key = operator.itemgetter(0), reverse=True)
+    tweet_list.sort(key=operator.itemgetter(0), reverse=True)
     tweet_data.close()
     for i in tweet_list:
         print str(i[0]) + "\t" + i[1] + " " + i[2],
@@ -141,4 +141,3 @@ if __name__ == '__main__':
         sys.exit()
 
     main(args[1], args[2], args[3])
-
