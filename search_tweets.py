@@ -18,7 +18,7 @@ def main(argquery, arglang):
         status.text = re.sub(r'[\n\t]', ' ', status.text)
         status.user.screen_name = re.sub(r'[\n\r]', ' ', status.user.screen_name)
         status.user.name = re.sub(r'[\n\r]', ' ', status.user.name)
-        if (status.retweeted == True or re.search('^RT', status.text)):
+        if status.retweeted or re.search('^RT', status.text):
             # I only want the non-RTed tweets!
             continue
         # Tweet ID and its content shall be retrieved..
