@@ -9,11 +9,6 @@ import tweepy
 import yaml
 
 
-# It may be worth having api keys stored in YAML file as well (if it's worth..)
-auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
-auth.set_access_token('access_token', 'access_token_secret')
-api = tweepy.API(auth)
-
 class NaiveBayes(object):
     def __init__(self, yaml_file):
         # open YAML file
@@ -87,8 +82,16 @@ class NaiveBayes(object):
         yaml.dump(self.data, stream, encoding=("utf-8"), allow_unicode=True)
 
 
-def main(yaml_file, tweet_file, tweeted_file):
-    bayes = NaiveBayes(yaml_file)
+def main(data_yaml_file, twitter_yaml_file, tweet_file, tweeted_file):
+    # Following lines are to read Twitter-API access keys from YAML file. 
+    # This is only a temporary solution; it shall eventually be handled by
+    # an independent class. 
+    yaml_data = yaml.load(open(twitter_yaml_file).read())
+    auth = tweepy.OAuthHandler(yaml_data["consumer_key"], yaml_data["consumer_secret"])
+    auth.set_access_token(yaml_data["access_token"], yaml_data["access_token_secret"])
+    api = tweepy.API(auth)
+
+    bayes = NaiveBayes(data_yaml_file)
     # Following lines should be used only for (re-)training the model and store it to YAML file
     # bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
     # bayes.write_yaml(yaml_file)
@@ -124,8 +127,8 @@ def main(yaml_file, tweet_file, tweeted_file):
 
 if __name__ == '__main__':
     args = sys.argv
-    if len(args) != 4:
-        sys.stderr.write("Usage: python " + args[0] + " YAML_file Tweet_file Tweeted_file\n")
+    if len(args) != 5:
+        sys.stderr.write("Usage: python " + args[0] + " DATA_YAML_file Twitter_YAML_file Tweet_file Tweeted_file\n")
         sys.exit()
 
-    main(args[1], args[2], args[3])
+    main(args[1], args[2], args[3], args[4])
