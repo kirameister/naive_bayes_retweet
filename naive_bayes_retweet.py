@@ -98,9 +98,9 @@ def main(data_yaml_file, twitter_yaml_file, tweet_file, tweeted_file):
 
     tweeted_set = {}
     with open(tweeted_file, "r") as tweeted_data:
-        for i in tweeted_data:
-            i = re.sub('[\r\n]', '', i)
-            tweeted_set[i] = 1
+        for retweeted_status in tweeted_data:
+            retweeted_status  = re.sub('[\r\n]', '', retweeted_status)
+            tweeted_set[retweeted_status] = 1
 
     tweet_list = []
     with open(tweet_file, "r") as tweet_data:
@@ -110,18 +110,17 @@ def main(data_yaml_file, twitter_yaml_file, tweet_file, tweeted_file):
             tweet_list.append([bayes.predicted_score(tweet), tweet_id, tweet])
         tweet_list.sort(key=operator.itemgetter(0), reverse=True)
 
-    for i in tweet_list:
-        print str(i[0]) + "\t" + i[1] + " " + i[2],
-        i[2] = re.sub('[\r\n]', '', i[2])
-        if (i[2] in tweeted_set):
+    for id_tweet_to_be_retweeted in tweet_list:
+        id_tweet_to_be_retweeted[2] = re.sub('[\r\n]', '', id_tweet_to_be_retweeted [2])
+        if (id_tweet_to_be_retweeted[2] in tweeted_set):
             # This tweet has already been RTed, so should be skipped
             continue
         # Write the retweeted value to the file and retweet
         with open(tweeted_file, 'a') as tweeted_data:
-            tweeted_data.write(i[2])
+            tweeted_data.write(id_tweet_to_be_retweeted[2])
             tweeted_data.write('\n')
-        print "Retweet: " + i[1] + " " + i[2]
-        api.retweet(i[1])
+        print "Retweet: " + id_tweet_to_be_retweeted[1] + " " + id_tweet_to_be_retweeted[2]
+        api.retweet(id_tweet_to_be_retweeted[1])
         break
 
 
