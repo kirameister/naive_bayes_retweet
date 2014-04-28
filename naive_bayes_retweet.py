@@ -10,8 +10,8 @@ import tweepy
 
 
 # It may be worth having api keys stored in YAML file as well (if it's worth..)
-auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
-auth.set_access_token('access_token', 'access_token_secret')
+-auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
+-auth.set_access_token('access_token', 'access_token_secret')
 api = tweepy.API(auth)
 
 class NaiveBayes(object):
@@ -28,7 +28,7 @@ class NaiveBayes(object):
         self.data["false_words"] = {}
 
         with open(true_file, "r") as true_data:
-            reader = csv.reader(true_data, delimitter='\t', skipinitialspace=True)
+            reader = csv.reader(true_data, delimiter='\t', skipinitialspace=True)
             for row in reader:
                 # ID TWEET
                 tweet_id, line = row
@@ -47,13 +47,10 @@ class NaiveBayes(object):
                         self.data["true_words"][token] = 1
 
         with open(false_file, "r") as false_data:
-            for row in false_data:
+            reader = csv.reader(false_data, delimiter='\t', skipinitialspace=True)
+            for row in reader:
                 # ID TWEET
-                row.rstrip()
-                segments = re.split('\t', row)
-                tweet_id = segments[0]
-                line = segments[1]
-                # This is to accept only the ASCII and ja-JP chars..
+                tweet_id, line = row
                 line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
                 line = re.sub(' ', '', line)
                 tokens = list(line)
@@ -104,12 +101,9 @@ def main(yaml_file, tweet_file, tweeted_file):
 
     tweet_list = []
     with open(tweet_file, "r") as tweet_data:
-        for row in tweet_data:
-            row.rstrip()
-            segments = re.split('\t', row)
-            tweet = segments[1]
-            tweet.rstrip()
-            tweet_id = segments[0]
+        reader = csv.reader(tweet_data, delimiter='\t', skipinitialspace=True)
+        for row in reader:
+            tweet_id, tweet = row
             tweet_list.append([bayes.predicted_score(tweet), tweet_id, tweet])
         tweet_list.sort(key=operator.itemgetter(0), reverse=True)
 
