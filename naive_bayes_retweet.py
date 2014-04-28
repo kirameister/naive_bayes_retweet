@@ -16,7 +16,7 @@ api = tweepy.API(auth)
 class NaiveBayes(object):
     def __init__(self, yaml_file):
         # open YAML file
-        self.data = yaml.load(open("data.yaml").read())
+        self.data = yaml.load(open(yaml_file).read())
 
     def train(self, true_file, false_file):
         self.data["true_category_count"] = 0
@@ -86,8 +86,7 @@ class NaiveBayes(object):
                 pass
         return score_true
 
-    def write_yaml(self):
-        yaml_file = "data.yaml"
+    def write_yaml(self, yaml_file):
         stream = file(yaml_file, 'w')
         yaml.dump(self.data, stream, encoding=("utf-8"), allow_unicode=True)
 
@@ -96,7 +95,7 @@ def main(yaml_file, tweet_file, tweeted_file):
     bayes = NaiveBayes(yaml_file)
     # Following lines should be used only for (re-)training the model and store it to YAML file
     # bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
-    # bayes.write_yaml()
+    # bayes.write_yaml(yaml_file)
 
     tweeted_set = {}
     with open(tweeted_file, "r") as tweeted_data:
