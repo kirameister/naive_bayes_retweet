@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import csv
 import math
 import operator
 import re
@@ -27,12 +28,10 @@ class NaiveBayes(object):
         self.data["false_words"] = {}
 
         with open(true_file, "r") as true_data:
-            for row in true_data:
-                # ID  TWEET
-                row.rstrip()
-                segments = re.split('\t', row)
-                tweet_id = segments[0]
-                line = segments[1]
+            reader = csv.reader(true_data, delimitter='\t', skipinitialspace=True)
+            for row in reader:
+                # ID TWEET
+                tweet_id, line = row
                 # This is to accept only the ASCII and ja-JP chars..
                 line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
                 # This is to surppress white space in the message (for the training purpose)
