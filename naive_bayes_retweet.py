@@ -120,7 +120,7 @@ def main(data_yaml_file, twitter_yaml_file, tweet_file, tweeted_file):
             tweeted_data.write(id_tweet_to_be_retweeted[2])
             tweeted_data.write('\n')
         api.retweet(id_tweet_to_be_retweeted[1])
-        print "RTed: " + id_tweet_to_be_retweeted[1] + " " + id_tweet_to_be_retweeted[2]
+        print("RTed: " + id_tweet_to_be_retweeted[1] + " " + id_tweet_to_be_retweeted[2])
         break
 
 
