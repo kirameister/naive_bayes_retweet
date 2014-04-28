@@ -4,15 +4,14 @@ import re
 import sys
 
 import tweepy
+import yaml
 
 
-# It may be worth having api keys stored in YAML file as well (if it's worth..)
-auth = tweepy.OAuthHandler('consumer_key', 'consumer_secret')
-auth.set_access_token('access_token', 'access_token_secret')
-api = tweepy.API(auth)
-
-
-def main(argquery, arglang):
+def main(yaml_file, argquery, arglang):
+    data = yaml.load(open(yaml_file).read())
+    auth = tweepy.OAuthHandler(data["consumer_key"], data["consumer_secret"])
+    auth.set_access_token(data["access_token"], data["access_token_secret"])
+    api = tweepy.API(auth)
     statuses = api.search(argquery, lang=arglang, rpp='100')
     for status in statuses:
         status.text = re.sub(r'[\n\t]', ' ', status.text)
@@ -26,7 +25,7 @@ def main(argquery, arglang):
 
 if __name__ == '__main__':
     args = sys.argv
-    if len(args) != 3:
-        sys.stderr.write("Usage: python " + args[0] + " twitter_query lang_code\n")
+    if len(args) != 4:
+        sys.stderr.write("Usage: python " + args[0] + " twitter_conf.yaml twitter_query lang_code\n")
         sys.exit()
-    main(args[1], args[2])
+    main(args[1], args[2], args[3])
