@@ -4,9 +4,9 @@ import math
 import operator
 import re
 import sys
-import yaml
 
 import tweepy
+import yaml
 
 
 # It may be worth having api keys stored in YAML file as well (if it's worth..)
