@@ -26,47 +26,45 @@ class NaiveBayes(object):
         self.data["true_words"] = {}
         self.data["false_words"] = {}
 
-        true_data = open(true_file, "r")
-        for row in true_data:
-            # ID  TWEET
-            row.rstrip()
-            segments = re.split('\t', row)
-            tweet_id = segments[0]
-            line = segments[1]
-            # This is to accept only the ASCII and ja-JP chars..
-            line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
-            # This is to surppress white space in the message (for the training purpose)
-            line = re.sub(' ', '', line)
-            tokens = list(line)
-            # Following is the actual training part..
-            self.data["true_category_count"] += 1
-            for token in tokens:
-                self.data["true_category_word_count"] += 1
-                try:
-                    self.data["true_words"][token] += 1
-                except KeyError:
-                    self.data["true_words"][token] = 1
-        true_data.close()
+        with open(true_file, "r") as true_data:
+            for row in true_data:
+                # ID  TWEET
+                row.rstrip()
+                segments = re.split('\t', row)
+                tweet_id = segments[0]
+                line = segments[1]
+                # This is to accept only the ASCII and ja-JP chars..
+                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
+                # This is to surppress white space in the message (for the training purpose)
+                line = re.sub(' ', '', line)
+                tokens = list(line)
+                # Following is the actual training part..
+                self.data["true_category_count"] += 1
+                for token in tokens:
+                    self.data["true_category_word_count"] += 1
+                    try:
+                        self.data["true_words"][token] += 1
+                    except KeyError:
+                        self.data["true_words"][token] = 1
 
-        false_data = open(false_file, "r")
-        for row in false_data:
-            # ID TWEET
-            row.rstrip()
-            segments = re.split('\t', row)
-            tweet_id = segments[0]
-            line = segments[1]
-            # This is to accept only the ASCII and ja-JP chars..
-            line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
-            line = re.sub(' ', '', line)
-            tokens = list(line)
-            self.data["false_category_count"] += 1
-            for token in tokens:
-                self.data["false_category_word_count"] += 1
-                try:
-                    self.data["false_words"][token] += 1
-                except KeyError:
-                    self.data["false_words"][token] = 1
-        false_data.close()
+        with open(false_file, "r") as false_data:
+            for row in false_data:
+                # ID TWEET
+                row.rstrip()
+                segments = re.split('\t', row)
+                tweet_id = segments[0]
+                line = segments[1]
+                # This is to accept only the ASCII and ja-JP chars..
+                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
+                line = re.sub(' ', '', line)
+                tokens = list(line)
+                self.data["false_category_count"] += 1
+                for token in tokens:
+                    self.data["false_category_word_count"] += 1
+                    try:
+                        self.data["false_words"][token] += 1
+                    except KeyError:
+                        self.data["false_words"][token] = 1
 
     def predicted_score(self, tweet_in_question):
         # In order to predict only the likelihood score, you don't need false category. I'm including this just for fun..
@@ -101,23 +99,22 @@ def main(yaml_file, tweet_file, tweeted_file):
     # bayes.write_yaml()
 
     tweeted_set = {}
-    tweeted_data = open(tweeted_file, "r")
-    for i in tweeted_data:
-        i = re.sub('[\r\n]', '', i)
-        tweeted_set[i] = 1
-    tweeted_data.close()
+    with open(tweeted_file, "r") as tweeted_data:
+        for i in tweeted_data:
+            i = re.sub('[\r\n]', '', i)
+            tweeted_set[i] = 1
 
     tweet_list = []
-    tweet_data = open(tweet_file, "r")
-    for row in tweet_data:
-        row.rstrip()
-        segments = re.split('\t', row)
-        tweet = segments[1]
-        tweet.rstrip()
-        tweet_id = segments[0]
-        tweet_list.append([bayes.predicted_score(tweet), tweet_id, tweet])
-    tweet_list.sort(key=operator.itemgetter(0), reverse=True)
-    tweet_data.close()
+    with open(tweet_file, "r") as tweet_data:
+        for row in tweet_data:
+            row.rstrip()
+            segments = re.split('\t', row)
+            tweet = segments[1]
+            tweet.rstrip()
+            tweet_id = segments[0]
+            tweet_list.append([bayes.predicted_score(tweet), tweet_id, tweet])
+        tweet_list.sort(key=operator.itemgetter(0), reverse=True)
+
     for i in tweet_list:
         print str(i[0]) + "\t" + i[1] + " " + i[2],
         i[2] = re.sub('[\r\n]', '', i[2])
@@ -125,10 +122,9 @@ def main(yaml_file, tweet_file, tweeted_file):
             # This tweet has already been RTed, so should be skipped
             continue
         # Write the retweeted value to the file and retweet
-        tweeted_data = open(tweeted_file, 'a')
-        tweeted_data.write(i[2])
-        tweeted_data.write('\n')
-        tweeted_data.close()
+        with open(tweeted_file, 'a') as tweeted_data:
+            tweeted_data.write(i[2])
+            tweeted_data.write('\n')
         print "Retweet: " + i[1] + " " + i[2]
         api.retweet(i[1])
         break
