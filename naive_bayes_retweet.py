@@ -92,9 +92,6 @@ def main(data_yaml_file, twitter_yaml_file, tweet_file, tweeted_file):
     api = tweepy.API(auth)
 
     bayes = NaiveBayes(data_yaml_file)
-    # Following lines should be used only for (re-)training the model and store it to YAML file
-    # bayes.train("tweets_data/violin.true", "tweets_data/violin.false")
-    # bayes.write_yaml(yaml_file)
 
     tweeted_set = {}
     with open(tweeted_file, "r") as tweeted_data:
