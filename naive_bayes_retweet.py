@@ -44,7 +44,6 @@ class NaiveBayes(object):
                 line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', line.decode("utf-8"))
                 # This is to surppress white space in the message (for the training purpose)
                 line = re.sub(' ', '', line)
-                #tokens = list(line)
                 tokens = self.tokenized(line)
                 # Following is the actual training part..
                 self.data["true_category_count"] += 1
@@ -62,7 +61,6 @@ class NaiveBayes(object):
                 tweet_id, line = row
                 line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', line.decode("utf-8"))
                 line = re.sub(' ', '', line)
-                #tokens = list(line)
                 tokens = self.tokenized(line)
                 self.data["false_category_count"] += 1
                 for token in tokens:
@@ -77,7 +75,7 @@ class NaiveBayes(object):
         tweet_in_question = re.sub('[\r\n]', '', tweet_in_question)
         tweet_in_question = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', tweet_in_question.decode("utf-8"))
         tweet_in_question = re.sub(' ', '', tweet_in_question)
-        tokens = list(tweet_in_question)
+        tokens = self.tokenized(tweet_in_question)
         all_category_count = self.data["false_category_count"] + self.data["true_category_count"]
         score_true = math.log(float(self.data["true_category_count"]) / float(all_category_count))    # P(category_true)
         score_false = math.log(float(self.data["false_category_count"]) / float(all_category_count))  # P(category_false)
