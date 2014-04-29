@@ -14,6 +14,19 @@ class NaiveBayes(object):
         # open YAML file
         self.data = yaml.load(open(yaml_file).read())
 
+    def tokenized(self, message):
+        token_list = list(message)
+        token_list_to_be_returned = token_list[:]
+        token_list.insert(0, "START")
+        token_list.append("END")
+        for i, value in enumerate(token_list):
+            try:
+                token_list_to_be_returned.append(unicode(token_list[i])+unicode(token_list[i+1]))
+            except IndexError: 
+                # i is at the end of the list
+                pass
+        return token_list_to_be_returned
+
     def train(self, true_file, false_file):
         self.data["true_category_count"] = 0
         self.data["false_category_count"] = 0
@@ -28,10 +41,11 @@ class NaiveBayes(object):
                 # ID TWEET
                 tweet_id, line = row
                 # This is to accept only the ASCII and ja-JP chars..
-                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
+                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', line.decode("utf-8"))
                 # This is to surppress white space in the message (for the training purpose)
                 line = re.sub(' ', '', line)
-                tokens = list(line)
+                #tokens = list(line)
+                tokens = self.tokenized(line)
                 # Following is the actual training part..
                 self.data["true_category_count"] += 1
                 for token in tokens:
@@ -46,9 +60,10 @@ class NaiveBayes(object):
             for row in reader:
                 # ID TWEET
                 tweet_id, line = row
-                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', segments[1].decode("utf-8"))
+                line = re.sub(u'[^\U00000030-\U0000007F\U00003000-\U0001F000]', '', line.decode("utf-8"))
                 line = re.sub(' ', '', line)
-                tokens = list(line)
+                #tokens = list(line)
+                tokens = self.tokenized(line)
                 self.data["false_category_count"] += 1
                 for token in tokens:
                     self.data["false_category_word_count"] += 1
