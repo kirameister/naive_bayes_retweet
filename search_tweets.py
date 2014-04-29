@@ -17,8 +17,10 @@ def main(yaml_file, argquery, arglang):
         status.text = re.sub(r'[\n\t]', ' ', status.text)
         status.user.screen_name = re.sub(r'[\n\r]', ' ', status.user.screen_name)
         status.user.name = re.sub(r'[\n\r]', ' ', status.user.name)
-        if status.retweeted or re.search('^RT', status.text):
-            # I only want the non-RTed tweets!
+        if status.retweeted or re.search('^RT', status.text) or \
+           re.search('[Bb][Oo][Tt]', status.user.screen_name) or \
+           re.search('[Bb][Oo][Tt]', status.user.name):
+            # I only want the non-RTed tweets from non-BOT accounts!
             continue
         # Tweet ID and its content shall be retrieved..
         print(str(status.id) + "\t" + status.text)
